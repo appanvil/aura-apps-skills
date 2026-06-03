@@ -1,0 +1,20 @@
+{
+  "name": "aura-apps-skills",
+  "interface": {
+    "displayName": "Aura Apps Skills"
+  },
+  "plugins": [
+    {
+      "name": "aura-apps",
+      "source": {
+        "source": "local",
+        "path": "./"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    }
+  ]
+}

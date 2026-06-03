@@ -8,7 +8,7 @@ It contains agent skills and supporting reference material for working with Aura
 
 ### `aura-apps-macro-reader`
 
-Located in `macro-reader/`.
+Located in `skills/aura-apps-macro-reader/`.
 
 Use this skill to read Confluence pages that contain Aura or Karma macros. These macros often store visible page content inside macro parameters rather than normal Confluence prose, so default Markdown extraction can miss important content.
 
@@ -24,19 +24,79 @@ The skill provides:
 ## Structure
 
 ```text
-macro-reader/
-├── SKILL.md
-└── references/
-    ├── aura-content-formatting/
-    ├── karma/
-    └── shared/
+skills/
+└── aura-apps-macro-reader/
+    ├── SKILL.md
+    └── references/
+        ├── aura-content-formatting/
+        ├── karma/
+        └── shared/
+
+.claude-plugin/
+├── marketplace.json
+└── plugin.json
+
+.codex-plugin/
+└── plugin.json
+
+.agents/
+└── plugins/
+    └── marketplace.json
 ```
 
 ## Usage
 
-Install or symlink this repository into an agent skills directory, then invoke the skill by name where supported:
+### Pi
+
+Symlink or copy this repository into a Pi skill location, for example:
+
+```bash
+ln -s /path/to/aura-apps-skills ~/.pi/agent/skills/aura-apps-skills
+```
+
+Invoke the skill where supported:
 
 ```text
 /skill:aura-apps-macro-reader
 ```
-# aura-apps-skills
+
+### Claude Code
+
+This repository includes a Claude plugin marketplace at `.claude-plugin/marketplace.json`.
+
+Add the marketplace and install the plugin:
+
+```text
+/plugin marketplace add appanvil/aura-apps-skills
+/plugin install aura-apps@aura-apps-skills
+```
+
+Claude plugin skills are namespaced by plugin name:
+
+```text
+/aura-apps:aura-apps-macro-reader
+```
+
+For local/personal installation without marketplace, copy the skill folder to:
+
+```text
+~/.claude/skills/aura-apps-macro-reader/
+```
+
+Then invoke:
+
+```text
+/aura-apps-macro-reader
+```
+
+### OpenAI Codex
+
+This repository includes a Codex plugin manifest at `.codex-plugin/plugin.json` and a repo marketplace at `.agents/plugins/marketplace.json`.
+
+For local skill installation without plugins, copy or symlink the skill folder to:
+
+```text
+~/.agents/skills/aura-apps-macro-reader/
+```
+
+Codex can also install it through the included marketplace/plugin metadata where plugin marketplaces are supported.
