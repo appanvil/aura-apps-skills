@@ -1,0 +1,8 @@
+{
+  "name": "aura-apps",
+  "description": "Aura Apps skills for reading Aura and Karma Confluence macros",
+  "version": "0.1.0",
+  "skills": [
+    "./skills/aura-apps-macro-reader"
+  ]
+}
