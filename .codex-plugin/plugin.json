@@ -1,0 +1,24 @@
+{
+  "name": "aura-apps",
+  "version": "0.1.0",
+  "description": "Aura Apps skills for reading Aura and Karma Confluence macros",
+  "author": {
+    "name": "appanvil GmbH",
+    "email": "support@appanvil.net",
+    "url": "https://www.appanvil.net"
+  },
+  "repository": "https://github.com/appanvil/aura-apps-skills",
+  "license": "MIT",
+  "keywords": ["aura", "karma", "confluence", "macros", "atlassian"],
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Aura Apps",
+    "shortDescription": "Read Aura and Karma Confluence macros",
+    "longDescription": "Skills and references for extracting visible content from Aura and Karma Confluence macros, including Forge/Connect parameter handling, per-macro parsing references, and Confluence link resolution.",
+    "developerName": "appanvil GmbH",
+    "category": "Productivity",
+    "capabilities": ["Read"],
+    "websiteURL": "https://www.appanvil.net",
+    "defaultPrompt": "Use the Aura Apps macro reader skill to extract content from a Confluence page containing Aura or Karma macros."
+  }
+}

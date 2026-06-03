@@ -1,0 +1,22 @@
+{
+  "name": "aura-apps-skills",
+  "owner": {
+    "name": "appanvil GmbH",
+    "email": "support@appanvil.net"
+  },
+  "metadata": {
+    "description": "Public Aura Apps skill collection",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "aura-apps",
+      "description": "Aura Apps skills for reading Aura and Karma Confluence macros",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./skills/aura-apps-macro-reader"
+      ]
+    }
+  ]
+}
