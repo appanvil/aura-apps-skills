@@ -15,6 +15,41 @@ from typing import Any
 
 EXT_TYPES = {"extension", "inlineExtension", "bodiedExtension"}
 
+# Fallback only. Primary identification is always Confluence's displayed macro
+# title (`extensionTitle`, `text`, or `macroMetadata.title`). These mappings are
+# used only for older/broken ADF payloads that omit the title.
+CONNECT_KEY_TO_TITLE = {
+    "aura-dynamic-content": "Aura - Dynamic Content (Cards & Lists)",
+    "aura-tab": "Aura - Tab (Must be used in Aura - Tab Group)",
+    "aura-pretty-title": "Aura - Title",
+    "aura-inline-button": "Aura - Button",
+    "aura-button": "Link",
+    "aura-divider": "Aura - Divider",
+    "aura-cards": "Aura - Cards",
+    "aura-background-image": "Aura - Background Content",
+    "aura-panel": "Aura - Panel",
+    "aura-tab-collection": "Aura - Tab Group",
+    "aura-expand-group": "Aura - Expand Group",
+    "aura-status": "Aura - Status",
+    "aura-countdown": "Aura - Countdown",
+    "aura-progress": "Aura - Progress",
+    "aura-html": "Aura - HTML (iframe)",
+    "aura-embed": "Aura - Embed",
+    "aura-dynamic-tabs": "Aura - Child Tabs",
+    "aura-user-profile": "Aura - User Profile",
+    "aura-expand": "Aura - Expand (Must be used in Aura - Expand Group)",
+    "aura-tab-collection-migratable": "Migrated Tab Group",
+    "aura-tab-migratable": "Migrated Tab",
+    "aura-expand-group-migratable": "Migrated Expand Group",
+    "aura-expand-migratable": "Migrated Expand",
+    "appanvil-karma-designer": "Karma - Page Builder",
+}
+
+FORGE_MODULE_TO_TITLE = {
+    "latex-math": "Aura LaTeX Math",
+    "latex-math-anchor": "Aura LaTeX Reference",
+}
+
 
 def get_doc(data: Any) -> dict[str, Any]:
     if isinstance(data, dict) and data.get("type") == "doc":
@@ -45,15 +80,13 @@ def macro_title(node: dict[str, Any]) -> str:
         return str(title)
     key = a.get("extensionKey", "")
     if isinstance(key, str):
-        if key.startswith("aura-"):
-            return key
-        if key.startswith("appanvil-karma-"):
-            return "Karma - Page Builder"
-        if "/static/latex-math-anchor" in key:
-            return "Aura LaTeX Reference"
-        if "/static/latex-math" in key:
-            return "Aura LaTeX Math"
-    return str(key or "Unknown macro")
+        if key in CONNECT_KEY_TO_TITLE:
+            return CONNECT_KEY_TO_TITLE[key]
+        if "/static/" in key:
+            module = key.rsplit("/static/", 1)[-1]
+            if module in FORGE_MODULE_TO_TITLE:
+                return FORGE_MODULE_TO_TITLE[module]
+    return "Unknown macro"
 
 
 def is_ours(title: str, node: dict[str, Any]) -> bool:
