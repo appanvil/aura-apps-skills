@@ -14,9 +14,10 @@ Use this skill to read Confluence pages that contain Aura or Karma macros. These
 
 The skill provides:
 
+- fast script-based Aura/Karma macro extraction from Confluence ADF
 - Aura/Karma macro detection
 - Forge vs Connect parameter handling
-- per-macro reference files
+- per-macro reference files for deep parsing
 - Aura parameter decoding guidance
 - Confluence link/page ID resolution guidance
 - safe handling instructions for embedded HTML macros
@@ -43,6 +44,17 @@ skills/
 └── plugins/
     └── marketplace.json
 ```
+
+## Fast extractor
+
+The macro reader includes a deterministic extractor for common Aura/Karma macros:
+
+```bash
+python3 skills/aura-apps-macro-reader/scripts/extract_macros.py page-adf.json
+python3 skills/aura-apps-macro-reader/scripts/extract_macros.py --json page-adf.json
+```
+
+Use this before loading per-macro reference files when possible.
 
 ## Usage
 
