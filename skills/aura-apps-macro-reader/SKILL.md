@@ -7,18 +7,38 @@ description: Use when reading Confluence pages built with Aura or Karma macro ap
 
 Pages built with Aura and Karma store visible content inside macro extension parameters. Default `markdown` often loses the content. Use ADF and dispatch progressively.
 
-## Core workflow
+## Fast path first
+
+Use the bundled extractor before reading per-macro references. It decodes common Aura/Karma macros deterministically and avoids loading large reference files into context.
 
 1. Fetch the page with ADF (`contentFormat: "adf"` or Confluence v2 `body-format=atlas_doc_format`). Avoid `markdown`; avoid `html` unless ADF is impossible.
-2. Walk all `extension`, `inlineExtension`, and `bodiedExtension` nodes recursively.
-3. Identify macros by title first:
+2. Save the full JSON response to a temp file, then run:
+
+```bash
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/extract_macros.py /tmp/page-adf.json
+```
+
+For machine-readable output:
+
+```bash
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/extract_macros.py --json /tmp/page-adf.json
+```
+
+3. Answer from the extractor output when possible.
+4. Only read per-macro reference files when the user asks for structure/details the extractor did not provide, when extraction looks wrong, or when implementing/debugging parser behavior.
+5. Do not resolve Confluence links, fetch descendants, fetch users, or inspect dynamic macro targets unless the user explicitly asks to follow/expand those targets.
+
+## Manual workflow when the extractor is insufficient
+
+1. Walk all `extension`, `inlineExtension`, and `bodiedExtension` nodes recursively.
+2. Identify macros by title first:
    - Aura if `attrs.extensionTitle` or `attrs.text` starts with `Aura ` or `Aura -`.
    - Karma if `attrs.extensionTitle` or `attrs.text` starts with `Karma ` or `Karma -`.
    - Use `extensionKey` only as fallback when title is missing.
-4. After title/vendor detection, determine shape per node:
+3. After title/vendor detection, determine shape per node:
    - Forge: `attrs.extensionType == "com.atlassian.ecosystem"`, params in `parameters.guestParams`, bare values.
    - Connect: `attrs.extensionType == "com.atlassian.confluence.macro.core"`, params in `parameters.macroParams`, values wrapped as `{ value }`.
-5. Read `summary` first when present. If it answers the question, stop. Otherwise dispatch to the exact reference file below.
+4. Read `summary` first when present. If it answers the question, stop. Otherwise dispatch to the exact reference file below.
 
 ```python
 def get_param(ext, key):
