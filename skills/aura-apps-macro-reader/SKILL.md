@@ -35,6 +35,14 @@ def get_param(ext, key):
 
 Most Aura content-formatting macros store structured config in `params`, encoded as JSON stringify → URL encode → Base64. Read `references/shared/aura-param-decoding.md` before parsing Aura `params`.
 
+For deterministic decoding, use the helper script. It only decodes `params`; it does not classify macros or replace title-based reference selection.
+
+```bash
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/decode_aura_params.py '<raw-params-value>'
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/decode_aura_params.py --adf /tmp/page-adf.json --macro-title 'Aura - Button'
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/decode_aura_params.py --adf /tmp/page-adf.json --all
+```
+
 ## Link/page resolution
 
 Aura/Karma link fields often store Confluence page/content IDs instead of URLs. When the user asks to follow links, inspect linked content, or identify link targets, read `references/shared/confluence-link-resolution.md`, resolve IDs through the Confluence API/MCP, then fetch linked pages in ADF and re-run this workflow.
