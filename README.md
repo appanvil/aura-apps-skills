@@ -16,8 +16,8 @@ The skill provides:
 
 - Aura/Karma macro detection
 - Forge vs Connect parameter handling
-- per-macro reference files
-- Aura parameter decoding guidance
+- per-macro reference files for deep parsing
+- Aura parameter decoding guidance and a deterministic decode helper script
 - Confluence link/page ID resolution guidance
 - safe handling instructions for embedded HTML macros
 
@@ -43,6 +43,18 @@ skills/
 └── plugins/
     └── marketplace.json
 ```
+
+## Helper scripts
+
+Decode Aura `params` values without asking the model to manually perform Base64/URL/JSON decoding:
+
+```bash
+python3 skills/aura-apps-macro-reader/scripts/decode_aura_params.py '<raw-params-value>'
+python3 skills/aura-apps-macro-reader/scripts/decode_aura_params.py --adf page-adf.json --macro-title 'Aura - Button'
+python3 skills/aura-apps-macro-reader/scripts/decode_aura_params.py --adf page-adf.json --all
+```
+
+The script only deserializes `params`; macro matching remains title/context based in the skill instructions.
 
 ## Usage
 

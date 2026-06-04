@@ -11,14 +11,16 @@ Pages built with Aura and Karma store visible content inside macro extension par
 
 1. Fetch the page with ADF (`contentFormat: "adf"` or Confluence v2 `body-format=atlas_doc_format`). Avoid `markdown`; avoid `html` unless ADF is impossible.
 2. Walk all `extension`, `inlineExtension`, and `bodiedExtension` nodes recursively.
-3. Identify macros by title first:
-   - Aura if `attrs.extensionTitle` or `attrs.text` starts with `Aura ` or `Aura -`.
-   - Karma if `attrs.extensionTitle` or `attrs.text` starts with `Karma ` or `Karma -`.
-   - Use `extensionKey` only as fallback when title is missing.
+3. Identify macros by displayed title first:
+   - Prefer `attrs.extensionTitle`, then `attrs.text`, then `attrs.parameters.macroMetadata.title`.
+   - Aura titles usually start with `Aura ` or `Aura -`; Karma titles usually start with `Karma ` or `Karma -`.
+   - Use `extensionKey` only as supporting evidence, never as the primary classifier. Titles and keys can change; infer the closest reference file from all available ADF evidence.
 4. After title/vendor detection, determine shape per node:
    - Forge: `attrs.extensionType == "com.atlassian.ecosystem"`, params in `parameters.guestParams`, bare values.
    - Connect: `attrs.extensionType == "com.atlassian.confluence.macro.core"`, params in `parameters.macroParams`, values wrapped as `{ value }`.
-5. Read `summary` first when present. If it answers the question, stop. Otherwise dispatch to the exact reference file below.
+5. Read `summary` first when present. If it answers the question, stop.
+6. Only read the one matching per-macro reference when the user needs structure/details beyond `summary`, or when a macro has no useful summary. Do not load all references.
+7. Do not resolve Confluence links, fetch descendants, fetch users, or inspect dynamic macro targets unless the user explicitly asks to follow/expand those targets.
 
 ```python
 def get_param(ext, key):
@@ -32,6 +34,14 @@ def get_param(ext, key):
 ## Aura parameter decoding
 
 Most Aura content-formatting macros store structured config in `params`, encoded as JSON stringify → URL encode → Base64. Read `references/shared/aura-param-decoding.md` before parsing Aura `params`.
+
+For deterministic decoding, use the helper script. It only decodes `params`; it does not classify macros or replace title-based reference selection.
+
+```bash
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/decode_aura_params.py '<raw-params-value>'
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/decode_aura_params.py --adf /tmp/page-adf.json --macro-title 'Aura - Button'
+python3 ${CLAUDE_SKILL_DIR:-skills/aura-apps-macro-reader}/scripts/decode_aura_params.py --adf /tmp/page-adf.json --all
+```
 
 ## Link/page resolution
 
